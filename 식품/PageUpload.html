@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <title>이미지 업로드</title>
+    <link rel="stylesheet" href="PageUpload.css">
+</head>
+<body>
+    <div class="container">
+        <div class="image-upload" id="image-upload">
+
+            <form method="post" enctype="multipart/form-data">
+                <div class="button">
+                    <label for="chooseFile">
+                        파일 선택
+                    </label>
+                </div>
+                <input type="file" id="chooseFile" name="chooseFile" accept="image/*" onchange="loadFile(this)">
+            </form>
+
+            <div class="fileContainer">
+                <div class="fileInput">
+                    <p>파일 이름: </p>
+                    <p id="fileName"></p>
+                </div>
+                <div class="buttonContainer">
+                    <div class="submitButton" id="submitButton">제출</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="image-show" id="image-show"></div>
+    </div>
+
+    <script src="PageUpload.js"></script>
+</body>
+</html>
