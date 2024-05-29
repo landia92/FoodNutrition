@@ -1,15 +1,4 @@
-module.exports = {
-    HTML: function (title, body, authStatusUI) {
-      return `
-      <!doctype html>
-      <html>
-      <head>    
-        <title>Login - ${title}</title>
-        <meta charset="utf-8">
-        <style>
-          @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
-  
-         body{
+body{
     margin:0;
     color:#6a6f8c;
     background:#c8c8c8;
@@ -164,16 +153,4 @@ module.exports = {
   }
   .foot-lnk{
     text-align:center;
-  }
-      </style>
-      </head>
-      <body>
-        <div class="background">
-          ${authStatusUI}
-          ${body}
-        </div>
-      </body>
-      </html>
-      `;
-    }
   }
