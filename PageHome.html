@@ -26,9 +26,9 @@
         function setDateInfo() {
             const params = getQueryParams();
             if (params.month && params.day && params.dayOfWeek) {
-                document.getElementById('period1').value = params.month;
-                document.getElementById('period2').value = params.day;
-                document.getElementById('period3').value = params.dayOfWeek;
+                document.getElementById('period1').innerText = params.month + "월";
+                document.getElementById('period2').innerText = params.day + "일";
+                document.getElementById('period3').innerText = params.dayOfWeek;
             }
         }
 
@@ -97,9 +97,9 @@
                 </div>
                 <div class="calendar">
                     <div class="calendarname">
-                        <input type="text" id="period1">월
-                        <input type="text" id="period2">일
-                        <input type="text" id="period3">요일
+                        <span id="period1"></span>
+                        <span id="period2"></span>
+                        <span id="period3"></span>
                     </div>
                     <div class="calendartext">오늘 먹은 식단을 확인해주세요!</div>
                 </div>

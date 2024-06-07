@@ -84,7 +84,7 @@ body{
   }
 
   .li-upload-image{
-    width:50px;
+    width:55px;
     height:55px;
     padding-top:5px;
   }
@@ -118,9 +118,13 @@ body{
     opacity: 1;
   }
 
-
 .picture.uploaded img {
   display: inline; /* 업로드된 이미지를 표시 */
+}
+
+.uploaded img {
+  width: 127px;
+  height:77px;
 }
 
   #choosefile1, #choosefile2, #choosefile3 {
@@ -174,7 +178,6 @@ body{
 }
 
 #period1, #period2, #period3 {
-  visibility: hidden;
   width:30px;
   text-align: center;
 }
