@@ -1,0 +1,138 @@
+body{
+  margin:0;
+  color:white;
+  background:#c8c8c8;
+  font:600 16px/18px 'Open Sans',sans-serif;
+}
+*,:after,:before{box-sizing:border-box}
+.clearfix:after,.clearfix:before{content:'';display:table}
+.clearfix:after{clear:both;display:block}
+a{color:inherit;text-decoration:none}
+
+.home-wrap{
+  width:100%;
+  margin:auto;
+  max-width:525px;
+  min-height:717px;
+  max-height:717px;
+  position: relative;
+  box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
+}
+
+.home-html{
+  width:100%;
+  position:relative;
+  background:rgb(255, 255, 255);
+}
+
+.home-banner{
+  width:100%;
+  height:90px;
+  position:relative;
+  background:rgba(40, 74, 101, 0.9);
+  text-align: center;
+  line-height:200%;
+  font-size:40px;
+  color:white;
+}
+
+.home-container{
+  width:100%;
+  position: relative;
+  min-height: 525px;
+}
+
+.home-footer{
+  width:100%;
+  position:relative;
+  background:rgba(40, 74, 101, 0.9);
+}
+
+li{
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  text-align: center;
+  width:150px;
+  height:86px;
+  border:1px solid white;
+}
+
+.li-home{
+  display:inline-block;
+}
+
+.li-home-image{
+  width:35px;
+  height:35px;
+  padding-top:5px;
+}
+
+.li-home-name{
+  color:white;
+  display:block;
+  padding:12px;
+  text-align:center;
+}
+
+.li-upload-image{
+  width:50px;
+  height:55px;
+  padding-top:5px;
+}
+
+.calendar-container {
+  width: 300px;
+  margin: 30px auto;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  background-color: #0d73a9;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+
+.day {
+  padding: 5px;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 5px;
+}
+
+.date {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.date:hover {
+  background-color: #f5f5f5;
+  color:black;
+}
+
+#prevBtn, #nextBtn {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  font-size: 30px;
+  color: white;
+}

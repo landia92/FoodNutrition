@@ -25,8 +25,17 @@ function renderCalendar() {
     const dateElement = document.createElement("div");
     dateElement.classList.add("date");
     dateElement.textContent = i;
+    dateElement.addEventListener('dblclick', () => {
+      navigateToHomePage(currentYear, currentMonth + 1, i);
+    });
     calendarDates.appendChild(dateElement);
   }
+}
+
+function navigateToHomePage(year, month, day) {
+  const date = new Date(year, month - 1, day);
+  const dayOfWeek = date.toLocaleString('ko-KR', { weekday: 'long' });
+  window.location.href = `PageHome.html?month=${month}&day=${day}&dayOfWeek=${dayOfWeek}`;
 }
 
 renderCalendar();
