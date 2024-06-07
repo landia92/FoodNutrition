@@ -43,7 +43,9 @@
     <div class="home-html">
         <div class="home-banner">Food Nutrition</div>
         <div class="home-container">
-            <div class="hello" id="hello"></div>
+            <div class="hello">
+                <%= authStatus %>
+            </div>
             <div class="pictex">
                 <ul class="ulpic">
                     <li class="lipic">
@@ -128,31 +130,31 @@
         </div>
     </div>
 </div>
-    <script>
-        function loadFile(event, index) {
-            const output = document.getElementById('preview' + index);
-            output.src = URL.createObjectURL(event.target.files[0]);
-            output.onload = function() {
-                URL.revokeObjectURL(output.src); // 메모리 해제
-            };
-            const pictureDiv = document.getElementById('picture' + index);
-            pictureDiv.classList.add('uploaded');
-            pictureDiv.querySelector('.picname').style.display = 'none';
-        }
-
-        function deleteFile(index) {
-            const output = document.getElementById('preview' + index);
-            output.src = 'UploadImage.png';
-            const pictureDiv = document.getElementById('picture' + index);
-            pictureDiv.classList.remove('uploaded');
-            pictureDiv.querySelector('.picname').style.display = 'block';
-            document.getElementById('choosefile' + index).value = '';
-        }
-
-        window.onload = function() {
-            displayUserName();
-            setDateInfo();
+<script>
+    function loadFile(event, index) {
+        const output = document.getElementById('preview' + index);
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function() {
+            URL.revokeObjectURL(output.src); // 메모리 해제
         };
-    </script>
+        const pictureDiv = document.getElementById('picture' + index);
+        pictureDiv.classList.add('uploaded');
+        pictureDiv.querySelector('.picname').style.display = 'none';
+    }
+
+    function deleteFile(index) {
+        const output = document.getElementById('preview' + index);
+        output.src = 'UploadImage.png';
+        const pictureDiv = document.getElementById('picture' + index);
+        pictureDiv.classList.remove('uploaded');
+        pictureDiv.querySelector('.picname').style.display = 'block';
+        document.getElementById('choosefile' + index).value = '';
+    }
+
+    window.onload = function() {
+        displayUserName();
+        setDateInfo();
+    };
+</script>
 </body>
 </html>
