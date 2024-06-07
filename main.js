@@ -163,7 +163,7 @@ app.get('/main', (req, res) => {
             <div class="li-area">
                 <ul class="li">
                     <li class="li-home">
-                        <a href="/PageHome.html">
+                        <a href="/main">
                             <img class="li-home-image" src="/HomeImage.png">
                             <div class="li-home-name">홈</div>
                         </a>
