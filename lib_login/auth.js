@@ -8,13 +8,35 @@ var db = require('./db');
 router.get('/login', function (request, response) {
     var title = '로그인';
     var html = template.HTML(title,`
-            <h2>로그인</h2>
-            <form action="/auth/login_process" method="post">
-            <p><input class="login" type="text" name="username" placeholder="아이디"></p>
-            <p><input class="login" type="password" name="pwd" placeholder="비밀번호"></p>
-            <p><input class="btn" type="submit" value="로그인"></p>
-            </form>            
-            <p>계정이 없으신가요?  <a href="/auth/register">회원가입</a></p> 
+    <form action="/auth/login_process" method="post" class="login-wrap">
+    <div class="login-html">
+    <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">로그인</label>
+    <input id="tab-2" type="radio" name="tab" class="sign-up" onClick="location.href='SignIn.html'"><label for="tab-2" class="tab"><a href="/auth/register">회원가입</a></label>
+    <div class="login-form">
+      <div class="sign-in-htm">
+        <div class="group">
+          <label for="user" class="label">ID</label>
+          <input id="user" type="text" class="input" name="username">
+        </div>
+        <div class="group">
+          <label for="pass" class="label">비밀번호</label>
+          <input id="pass" type="password" class="input" data-type="password" name="pwd">
+        </div>
+        <div class="group">
+          <input id="check" type="checkbox" class="check" checked>
+          <label for="check"><span class="icon"></span> 로그인 유지</label>
+        </div>
+        <div class="group">
+          <input type="submit" class="button" value="로그인">
+        </div>
+        <div class="hr"></div>
+        <div class="foot-lnk">
+          <a href="FindPw.html">비밀번호 찾기</a>
+        </div>
+      </div>
+      </div>
+    </div>
+    </form>            
         `, '');
     response.send(html);
 });
