@@ -117,25 +117,6 @@ app.post('/upload', upload.single('image'), (req, res) => {
         });
 });
 
-function returnMessage(result){
-    foodInfo = [
-        {"name": "Chicken", "k_name":"치킨", "kcal": "530"},
-        {"name": "Donut", "k_name":"도넛", "kcal": "296"},
-        {"name": "Dumpling", "k_name":"만두", "kcal": "397"},
-        {"name": "Lobster", "k_name":"랍스터", "kcal": "286"},
-        {"name": "Madeleine", "k_name":"마들렌", "kcal": "110"},
-        {"name": "Pizza", "k_name":"피자", "kcal": "255"},
-        {"name": "Pork_cutlet", "k_name":"돈가스", "kcal": "651"},
-        {"name": "Rolled_omelet", "k_name":"계란말이", "kcal": "154"},
-        {"name": "Sandwich", "k_name":"샌드위치", "kcal": "304"},
-        {"name": "Sausage", "k_name":"소시지", "kcal": "262"}
-    ]
-    for(i=0;i++;i<foodInfo.length){
-        if(result.equal(foodInfo[i].name)){
-            return "업로드된 음식은 "
-        }
-    }
-}
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
