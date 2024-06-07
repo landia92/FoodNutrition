@@ -33,7 +33,7 @@
         <div class="li-area">
           <ul class="li">
             <li class="li-home">
-              <a href="PageHome.html">
+              <a href="/main">
                 <img class="li-home-image" src="../HomeImage.png">
                 <div class="li-home-name">홈</div>
               </a>
@@ -93,7 +93,7 @@
     function navigateToHomePage(year, month, day) {
       const date = new Date(year, month - 1, day);
       const dayOfWeek = date.toLocaleString('ko-KR', { weekday: 'long' });
-      window.location.href = `PageHome.html?month=${month}&day=${day}&dayOfWeek=${dayOfWeek}`;
+      window.location.href = `main?month=${month}&day=${day}&dayOfWeek=${dayOfWeek}`;
     }
 
     renderCalendar();
