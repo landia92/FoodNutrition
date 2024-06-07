@@ -8,35 +8,31 @@ var db = require('./db');
 router.get('/login', function (request, response) {
     var title = '로그인';
     var html = template.HTML(title,`
-    <form action="/auth/login_process" method="post" class="login-wrap">
-    <div class="login-html">
-    <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">로그인</label>
-    <input id="tab-2" type="radio" name="tab" class="sign-up" onClick="location.href='SignIn.html'"><label for="tab-2" class="tab"><a href="/auth/register">회원가입</a></label>
-    <div class="login-form">
-      <div class="sign-in-htm">
-        <div class="group">
-          <label for="user" class="label">ID</label>
-          <input id="user" type="text" class="input" name="username">
+            <form action="/auth/login_process" method="post" class="login-wrap">
+            <div class="login-html">
+        <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">로그인</label>
+        <input id="tab-2" type="radio" name="tab" class="sign-up" onClick="location.href='SignIn.html'"><label for="tab-2" class="tab"><a href="/auth/register">회원가입</a></label>
+        <div class="login-form">
+        <div class="sign-in-htm">
+            <div class="group">
+            <label for="user" class="label">ID</label>
+            <input id="user" type="text" class="input" name="username">
+            </div>
+            <div class="group">
+            <label for="pass" class="label">비밀번호</label>
+            <input id="pass" type="password" class="input" data-type="password" name="pwd">
+            </div>
+            <div class="group">
+            <input type="submit" class="button" value="로그인">
+            </div>
+            <div class="hr"></div>
+            <div class="foot-lnk">
+            <a href="../FindPw.html">비밀번호 찾기</a>
+            </div>
         </div>
-        <div class="group">
-          <label for="pass" class="label">비밀번호</label>
-          <input id="pass" type="password" class="input" data-type="password" name="pwd">
         </div>
-        <div class="group">
-          <input id="check" type="checkbox" class="check" checked>
-          <label for="check"><span class="icon"></span> 로그인 유지</label>
         </div>
-        <div class="group">
-          <input type="submit" class="button" value="로그인">
-        </div>
-        <div class="hr"></div>
-        <div class="foot-lnk">
-          <a href="FindPw.html">비밀번호 찾기</a>
-        </div>
-      </div>
-      </div>
-    </div>
-    </form>            
+        </form>            
         `, '');
     response.send(html);
 });
@@ -79,18 +75,52 @@ router.get('/logout', function (request, response) {
 router.get('/register', function(request, response) {
     var title = '회원가입';    
     var html = template.HTML(title, `
-    <h2>회원가입</h2>
-    <form action="/auth/register_process" method="post">
-    <p><input class="login" type="text" name="username" placeholder="아이디"></p>
-    <p><input class="login" type="text" name="email" placeholder="이메일"></p> <!-- 이메일 입력 필드 추가 -->
-    <p><input class="login" type="password" name="pwd" placeholder="비밀번호"></p>    
-    <p><input class="login" type="password" name="pwd2" placeholder="비밀번호 재확인"></p>
-    <p><input class="btn" type="submit" value="제출"></p>
-    </form>            
-    <p><a href="/auth/login">로그인화면으로 돌아가기</a></p>
+    <!DOCTYPE html>
+    <html>
+    <title>회원가입</title>
+    <link rel="stylesheet" href="LogIn.css" />
+    <div class="login-wrap">
+      <div class="login-html">
+        <input id="tab-1" type="radio" name="tab" class="sign-in" checked>
+        <label for="tab-1" class="tab">회원가입</label>
+        <input id="tab-2" type="radio" name="tab" class="sign-up" onClick="location.href='/auth/login'">
+        <label for="tab-2" class="tab">로그인</label>
+        <div class="login-form">
+          <div class="sign-in-htm">
+            <form action="/auth/register_process" method="post">
+              <div class="group">
+                <label for="user" class="label">ID</label>
+                <input id="user" type="text" class="input" name="username" placeholder="아이디">
+              </div>
+              <div class="group">
+                <label for="email" class="label">이메일</label>
+                <input id="email" type="text" class="input" name="email" placeholder="이메일">
+              </div>
+              <div class="group">
+                <label for="pass" class="label">비밀번호</label>
+                <input id="pass" type="password" class="input" name="pwd" placeholder="비밀번호">
+              </div>
+              <div class="group">
+                <label for="pass2" class="label">비밀번호 확인</label>
+                <input id="pass2" type="password" class="input" name="pwd2" placeholder="비밀번호 재확인">
+              </div>
+              <div class="group">
+                <input type="submit" class="button" value="회원가입">
+              </div>
+            </form>
+            <div class="hr"></div>
+            <div class="foot-lnk">
+              <label for="tab-1">이미 회원이신가요? <a href="/auth/login">로그인</a></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </html>
     `, '');
     response.send(html);
 });
+
  
 // 회원가입 프로세스
 router.post('/register_process', function(request, response) {    

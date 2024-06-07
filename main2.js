@@ -5,7 +5,7 @@ const FileStore = require('session-file-store')(session)
 const multer = require('multer');
 const connection = require('./lib_login/db');  // 데이터베이스 연결 모듈 추가
 
-var authRouter = require('./lib_login/auth');
+var authRouter = require('./lib_login/auth.js');
 var authCheck = require('./lib_login/authCheck.js');
 var template = require('./lib_login/template.js');
 
