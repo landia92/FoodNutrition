@@ -105,20 +105,22 @@ app.get('/main', (req, res) => {
                 <ul class="ulpic">
                     <li class="lipic">
                         <form method="post" action="/upload" enctype="multipart/form-data">
-                            <label for="choosefile1">
+                            <!--<label>
                                 <div class="picture" id="picture1">
                                     <img id="preview1" class="li-upload-image" src="/UploadImage.png">
                                     <a class="picname">사진을 넣어주세요</a>
                                 </div>
-                            </label>
-                            <input type="file" id="choosefile1" name="file" accept="image/*" onchange="loadFile(event, 1)">
+                                <input type="file" name="file" accept="image/*" onchange="loadFile(event, 1)">
+                            </label>-->
+                            <input type="file" name="file">
+                            <button type="submit">파일 업로드</button>
                         </form>
                         <div class="text">가나다라마바사 아자차카타파하</div>
                         <div class="delete" onclick="deleteFile(1)">
                             <img class="delete-image" src="/DeleteImage.png">
                         </div>
                     </li>
-                    <li class="lipic">
+                    <!--<li class="lipic">
                         <form method="post" action="/upload" enctype="multipart/form-data">
                             <label for="choosefile2">
                                 <div class="picture" id="picture2">
@@ -147,7 +149,7 @@ app.get('/main', (req, res) => {
                         <div class="delete" onclick="deleteFile(3)">
                             <img class="delete-image" src="/DeleteImage.png">
                         </div>
-                    </li>
+                    </li>-->
                 </ul>
             </div>
             <div class="calendar">
@@ -244,21 +246,30 @@ app.post('/upload', upload.single('file'), (req, res) => {
   const nickname = req.session.nickname;  // 세션에서 사용자 닉네임 가져오기
 
   // 사용자 정보 가져오기
-  connection.query('SELECT files FROM user WHERE username = ?', [nickname], (error, results) => {
+  connection.query('SELECT file_path FROM file_storage WHERE username = ?', [nickname], (error, results) => {
     if (error) {
       console.error(error);
       res.status(500).send('사용자 정보를 가져오는 데 실패했습니다.');
       return;
     }
+    connection.query('INSERT INTO file_storage (username, file_path, file_name) VALUES (?, ?, ?)', [nickname, uploadedFile.path, uploadedFile.originalname], (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다.');
+        return;
+      }
+      res.set('Content-Type', 'text/plain; charset=utf-8');
+      res.send(`파일이 업로드되었으며 경로가 저장되었습니다: ${uploadedFile.originalname}`);
+    });
 
-    if (results.length > 0) {
+    /*if (results.length > 0) {
       // 기존 파일 경로에 새 파일 경로 추가
       let files = results[0].files ? results[0].files.split(',') : [];
       files.push(uploadedFile.path);
 
       // 업데이트된 파일 경로를 데이터베이스에 저장
       const updatedFiles = files.join(',');
-      connection.query('UPDATE user SET files = ? WHERE username = ?', [updatedFiles, nickname], (error, results) => {
+      connection.query('INSERT INTO file_storage (username, file_path) VALUES (?, ?)', [updatedFiles, nickname], (error, results) => {
         if (error) {
           console.error(error);
           res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다.');
@@ -269,7 +280,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
       });
     } else {
       res.status(404).send('사용자를 찾을 수 없습니다.');
-    }
+    }*/
   });
 });
 
