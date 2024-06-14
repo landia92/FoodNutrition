@@ -10,7 +10,7 @@
             const userId = localStorage.getItem('loggedInUser');
             if (userId) {
                 document.getElementById('userName').textContent = userId;
-                document.getElementById('userName').style.visibility = 'visible';
+                document.getElementById('userName').style.visibility = 'invisible';
             }
         }
 
@@ -45,53 +45,7 @@
         <div class="home-container">
             <div class="hello">${authCheck.statusUI(req, res)}</div>
             <div class="pictex">
-                <ul class="ulpic">
-                    <li class="lipic">
-                        <form method="post" action="/upload" enctype="multipart/form-data">
-                            <label for="choosefile1">
-                                <div class="picture" id="picture1">
-                                    <img id="preview1" class="li-upload-image" src="/UploadImage.png">
-                                    <a class="picname">사진을 넣어주세요</a>
-                                </div>
-                            </label>
-                            <input type="file" id="choosefile1" name="file" accept="image/*" onchange="loadFile(event, 1)">
-                        </form>
-                        <div class="text">가나다라마바사 아자차카타파하</div>
-                        <div class="delete" onclick="deleteFile(1)">
-                            <img class="delete-image" src="/DeleteImage.png">
-                        </div>
-                    </li>
-                    <li class="lipic">
-                        <form method="post" action="/upload" enctype="multipart/form-data">
-                            <label for="choosefile2">
-                                <div class="picture" id="picture2">
-                                    <img id="preview2" class="li-upload-image" src="/UploadImage.png">
-                                    <a class="picname">사진을 넣어주세요</a>
-                                </div>
-                            </label>
-                            <input type="file" id="choosefile2" name="file" accept="image/*" onchange="loadFile(event, 2)">
-                        </form>
-                        <div class="text">가나다라마바사 아자차카타파하</div>
-                        <div class="delete" onclick="deleteFile(2)">
-                            <img class="delete-image" src="/DeleteImage.png">
-                        </div>
-                    </li>
-                    <li class="lipic">
-                        <form method="post" action="/upload" enctype="multipart/form-data">
-                            <label for="choosefile3">
-                                <div class="picture" id="picture3">
-                                    <img id="preview3" class="li-upload-image" src="/UploadImage.png">
-                                    <a class="picname">사진을 넣어주세요</a>
-                                </div>
-                            </label>
-                            <input type="file" id="choosefile3" name="file" accept="image/*" onchange="loadFile(event, 3)">
-                        </form>
-                        <div class="text">가나다라마바사 아자차카타파하</div>
-                        <div class="delete" onclick="deleteFile(3)">
-                            <img class="delete-image" src="/DeleteImage.png">
-                        </div>
-                    </li>
-                </ul>
+
             </div>
             <div class="calendar">
                 <div class="calendarname">

@@ -12,14 +12,32 @@ var authRouter = require('./lib_login/auth');
 var authCheck = require('./lib_login/authCheck.js');
 var template = require('./lib_login/template.js');
 const connection = require("./lib_login/db");
+const FormData = require("form-data");
+const fs = require("fs");
+const axios = require("axios");
+
+var monDay=null; //날짜를 DB에 전달하기 위한 변수
+var savedFile = null
 
 const app = express();
 const port = 3000;
+
+
+//오늘 날짜 출력
+const today = new Date();
+const dayOfWeekNumber = today.getDay();
+const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+let month = today.getMonth() + 1; // 월 (0부터 시작하므로 +1)
+let day = today.getDate();
+let dayOfWeek = days[dayOfWeekNumber];
+
 
 /*app.set('view engine', 'ejs');
 app.set('views', './public');*/
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/uploads', express.static('uploads'));
+app.use(express.json());
 app.use(session({
   secret: '~~~',  // 원하는 문자 입력
   resave: false,
@@ -32,7 +50,7 @@ app.get('/', (req, res) => {
     res.redirect('/auth/login');
     return false;
   } else {
-    res.redirect('/main');
+    res.redirect(`/main?month=${month}&day=${day}&dayOfWeek=${dayOfWeek}`);
     return false;
   }
 });
@@ -49,9 +67,36 @@ app.get('/main', (req, res) => {
   app.use(express.static('./css'));
   app.use(express.static('./public'));
 
-  // Main HTML 폼
-  const html = template.HTML('Welcome',
-      `<head>
+  const nickname = req.session.nickname;  // 세션에서 사용자 닉네임 가져오기
+  const { month, day } = req.query; //월과 일
+  monDay = month + day              //월과 일을 전달하기 위한 값
+  console.log(monDay);
+
+  connection.query('SELECT file_path FROM file_storage WHERE username = ?', [nickname], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send('사용자 정보를 가져오는 데 실패했습니다.');
+      return;
+    }
+    if(isNaN(monDay)){
+      res.sendFile(__dirname + '/public/PageHome.html');
+      return;
+    }
+    connection.query('SELECT file_path, file_name FROM file_storage WHERE username = ? AND date = ?', [nickname, monDay], (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다.');
+        return;
+      }
+      else if(monDay == null){
+        console.error(error);
+        res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다. 날짜를 선택하세요.');
+        return;
+      }
+
+      // Main HTML 폼
+      const html = template.HTML('Welcome',
+          `<head>
     <link rel="stylesheet" href="/main.css">
   </head>
   <body>
@@ -86,7 +131,7 @@ app.get('/main', (req, res) => {
                 document.getElementById('period1').innerText = params.month + "월";
                 document.getElementById('period2').innerText = params.day + "일";
                 document.getElementById('period3').innerText = params.dayOfWeek;
-            }
+            }   
         }
 
         window.onload = function() {
@@ -102,55 +147,11 @@ app.get('/main', (req, res) => {
         <div class="home-container">
             <div class="hello">${authCheck.statusUI(req, res)}</div>
             <div class="pictex">
-                <ul class="ulpic">
-                    <li class="lipic">
-                        <form method="post" action="/upload" enctype="multipart/form-data">
-                            <!--<label>
-                                <div class="picture" id="picture1">
-                                    <img id="preview1" class="li-upload-image" src="/UploadImage.png">
-                                    <a class="picname">사진을 넣어주세요</a>
-                                </div>
-                                <input type="file" name="file" accept="image/*" onchange="loadFile(event, 1)">
-                            </label>-->
-                            <input type="file" name="file">
-                            <button type="submit">파일 업로드</button>
-                        </form>
-                        <div class="text">가나다라마바사 아자차카타파하</div>
-                        <div class="delete" onclick="deleteFile(1)">
-                            <img class="delete-image" src="/DeleteImage.png">
-                        </div>
-                    </li>
-                    <!--<li class="lipic">
-                        <form method="post" action="/upload" enctype="multipart/form-data">
-                            <label for="choosefile2">
-                                <div class="picture" id="picture2">
-                                    <img id="preview2" class="li-upload-image" src="/UploadImage.png">
-                                    <a class="picname">사진을 넣어주세요</a>
-                                </div>
-                            </label>
-                            <input type="file" id="choosefile2" name="file" accept="image/*" onchange="loadFile(event, 2)">
-                        </form>
-                        <div class="text">가나다라마바사 아자차카타파하</div>
-                        <div class="delete" onclick="deleteFile(2)">
-                            <img class="delete-image" src="/DeleteImage.png">
-                        </div>
-                    </li>
-                    <li class="lipic">
-                        <form method="post" action="/upload" enctype="multipart/form-data">
-                            <label for="choosefile3">
-                                <div class="picture" id="picture3">
-                                    <img id="preview3" class="li-upload-image" src="/UploadImage.png">
-                                    <a class="picname">사진을 넣어주세요</a>
-                                </div>
-                            </label>
-                            <input type="file" id="choosefile3" name="file" accept="image/*" onchange="loadFile(event, 3)">
-                        </form>
-                        <div class="text">가나다라마바사 아자차카타파하</div>
-                        <div class="delete" onclick="deleteFile(3)">
-                            <img class="delete-image" src="/DeleteImage.png">
-                        </div>
-                    </li>-->
-                </ul>
+                <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file">
+                    <button type="submit" id="submitButton">파일 업로드</button>
+                </form>
+                <ul class="ulpic" id="dynamicList"></ul>
             </div>
             <div class="calendar">
                 <div class="calendarname">
@@ -188,37 +189,111 @@ app.get('/main', (req, res) => {
     </div>
 </div>
     <script>
-        function loadFile(event, index) {
-            const output = document.getElementById('preview' + index);
-            output.src = URL.createObjectURL(event.target.files[0]);
-            output.onload = function() {
-                URL.revokeObjectURL(output.src); // 메모리 해제
-            };
-            const pictureDiv = document.getElementById('picture' + index);
-            pictureDiv.classList.add('uploaded');
-            pictureDiv.querySelector('.picname').style.display = 'none';
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault();  // 폼의 기본 제출 동작을 방지
+            var formData = new FormData(this);
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.text();
+                document.getElementById('message').innerText = result;
+            } catch (error) {
+                document.getElementById('message').innerText = 'Failed to upload image.';
+            }
+        }
+        
+        document.getElementById('submitButton').onclick = function (){
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000); // 밀리초 후에 페이지를 새로 고침
+        }
+        
+        function readAllFile(file){
+            const list = document.getElementById("dynamicList");
+            for(i = 0; i <file.length; i++){
+            let li = document.createElement("li");
+                li.className = "lipic";
+                li.innerHTML = \`
+                    <form id="deleteForm" method="delete" action="/delete" enctype="multipart/form-data">
+                        <div class="picture">
+                                <img id="preview" class="li-upload-image" src="/UploadImage.png">
+                        </div>
+                        <input id="deleteId" type="hidden" name="_method" value="">
+                    </form>
+                    <div class="text"><a></a></div>
+                    <div class="delete">
+                        <img class="delete-image" src="/DeleteImage.png" onclick="deleteItem(this)">
+                    </div>
+                    \`;
+                    
+                    let foodInfo = [
+  {"name": "Chicken", "k_name":"치킨", "kcal": "530"},
+  {"name": "Donut", "k_name":"도넛", "kcal": "296"},
+  {"name": "Dumpling", "k_name":"만두", "kcal": "397"},
+  {"name": "Lobster", "k_name":"랍스터", "kcal": "286"},
+  {"name": "Madeleine", "k_name":"마들렌", "kcal": "110"},
+  {"name": "Pizza", "k_name":"피자", "kcal": "255"},
+  {"name": "Pork_cutlet", "k_name":"돈가스", "kcal": "651"},
+  {"name": "Rolled_omelet", "k_name":"계란말이", "kcal": "154"},
+  {"name": "Sandwich", "k_name":"샌드위치", "kcal": "304"},
+  {"name": "Sausage", "k_name":"소시지", "kcal": "262"}
+]
+                li.querySelector('img').src = "./"+file[i].file_path;
+                for(j=0;j<foodInfo.length;j++){
+                    if(file[i].file_name == foodInfo[j].name){
+                        li.querySelector('a').innerText = "이름 : " + foodInfo[j].k_name + "    kcal : " + foodInfo[j].kcal;
+                        li.querySelector('input').value = foodInfo[j].name;
+                        break;
+                    }                 
+                }
+                list.appendChild(li);
+                
+            }
+        }
+        
+        function deleteItem(element) {
+            document.getElementById('deleteForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 폼의 기본 제출 동작 방지
+
+            const id = document.getElementById('deleteId').value; // 입력된 ID 가져오기
+                if (!id) {
+            alert('Please enter a valid ID.');
+            return;
         }
 
-        function deleteFile(index) {
-            const output = document.getElementById('preview' + index);
-            output.src = 'UploadImage.png';
-            const pictureDiv = document.getElementById('picture' + index);
-            pictureDiv.classList.remove('uploaded');
-            pictureDiv.querySelector('.picname').style.display = 'block';
-            document.getElementById('choosefile' + index).value = '';
+    fetch('/delete', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(id) // ID를 JSON 형식으로 서버에 전송
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert(data); // 서버로부터 받은 응답을 사용자에게 알림
+    })
+    .catch(error => console.error('Error:', error));
+});
+            // 클릭된 이미지의 부모인 div를 찾고, 그 부모의 부모인 li를 삭제
+            element.closest('li').remove();
         }
-
+        
         window.onload = function() {
             displayUserName();
             setDateInfo();
+            readAllFile(${JSON.stringify(results)});
         };
     </script>
 </body>
 </html>
   </body>`,
-  );
-  res.send(html);
-  
+      );
+      res.send(html);
+    });
+  })
+
   // html 파일로 불러오기
   //res.sendFile(__dirname + '/public/PageHome.html');
 });
@@ -243,44 +318,69 @@ app.post('/upload', upload.single('file'), (req, res) => {
     return;
   }
 
+  const filePath = `./uploads/${req.file.filename}`;
+  const formData = new FormData();
+  formData.append('image', fs.createReadStream(filePath));
   const nickname = req.session.nickname;  // 세션에서 사용자 닉네임 가져오기
 
-  // 사용자 정보 가져오기
-  connection.query('SELECT file_path FROM file_storage WHERE username = ?', [nickname], (error, results) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('사용자 정보를 가져오는 데 실패했습니다.');
-      return;
+  axios.post('http://localhost:5000/upload/yolov5s-food', formData, {
+    headers: {
+      ...formData.getHeaders()
     }
-    connection.query('INSERT INTO file_storage (username, file_path, file_name) VALUES (?, ?, ?)', [nickname, uploadedFile.path, uploadedFile.originalname], (error, results) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다.');
-        return;
-      }
-      res.set('Content-Type', 'text/plain; charset=utf-8');
-      res.send(`파일이 업로드되었으며 경로가 저장되었습니다: ${uploadedFile.originalname}`);
-    });
-
-    /*if (results.length > 0) {
-      // 기존 파일 경로에 새 파일 경로 추가
-      let files = results[0].files ? results[0].files.split(',') : [];
-      files.push(uploadedFile.path);
-
-      // 업데이트된 파일 경로를 데이터베이스에 저장
-      const updatedFiles = files.join(',');
-      connection.query('INSERT INTO file_storage (username, file_path) VALUES (?, ?)', [updatedFiles, nickname], (error, results) => {
-        if (error) {
-          console.error(error);
-          res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다.');
-          return;
-        }
-        res.set('Content-Type', 'text/plain; charset=utf-8');
-        res.send(`파일이 업로드되었으며 경로가 저장되었습니다: ${uploadedFile.originalname}`);
+  })
+      .then(response => {
+        // EJS 템플릿을 사용해 응답 데이터를 렌더링
+        //res.render('result', { data: response.data });
+        // EJS 없고 메시지만 표시
+        //console.log('Image successfully uploaded:', response.data);
+        //res.send(response.data[0].name)
+        // 사용자 정보 가져오기
+        connection.query('SELECT file_path FROM file_storage WHERE username = ?', [nickname], (error, results) => {
+          if (error) {
+            console.error(error);
+            res.status(500).send('사용자 정보를 가져오는 데 실패했습니다.');
+            return;
+          }
+          connection.query('INSERT INTO file_storage (username, file_path, file_name, date) VALUES (?, ?, ?, ?)', [nickname, uploadedFile.path, response.data[0].name, monDay], (error, results) => {
+            if (error) {
+              console.error(error);
+              res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다.');
+              return;
+            }
+            else if(monDay == null){
+              console.error(error);
+              res.status(500).send('파일 정보를 데이터베이스에 저장하지 못했습니다. 날짜를 선택하세요.');
+              return;
+            }
+            /*res.set('Content-Type', 'text/plain; charset=utf-8');
+            res.send(`파일이 업로드되었으며 경로가 저장되었습니다: ${uploadedFile.originalname}`);*/
+          });
+        });
+        /*res.send('이미지가 성공적으로 업로드 되었습니다.');*/
+      })
+      .catch(error => {
+        console.error('Failed to upload image:', error);
+        res.status(500).send('Failed to upload image.');
       });
-    } else {
-      res.status(404).send('사용자를 찾을 수 없습니다.');
-    }*/
+});
+
+app.delete('/delete', (req, res) => {
+  const id  = req.body; // 클라이언트에서 보낸 ID
+
+  if (!id) {
+    return res.status(400).send('ID is required');
+  }
+  connection.query('DELETE FROM file_storage WHERE file_name = ?', id, (error, results) => {
+    if (error) {
+      console.error('Error deleting the record:', error);
+      return res.status(500).send('Error deleting the record');
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send('No record found with the given ID');
+    }
+
+    res.send('Record deleted successfully');
   });
 });
 
