@@ -220,7 +220,7 @@ app.get('/main', (req, res) => {
                         <div class="picture">
                                 <img id="preview" class="li-upload-image" src="/UploadImage.png">
                         </div>
-                        <input id="deleteId" type="hidden" name="_method" value="">
+                        <input id="deleteId" type="hidden" name="file_name" value="">
                     </form>
                     <div class="text"><a></a></div>
                     <div class="delete">
@@ -254,31 +254,24 @@ app.get('/main', (req, res) => {
         }
         
         function deleteItem(element) {
-            document.getElementById('deleteForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // 폼의 기본 제출 동작 방지
-
-            const id = document.getElementById('deleteId').value; // 입력된 ID 가져오기
-                if (!id) {
-            alert('Please enter a valid ID.');
-            return;
-        }
-
-    fetch('/delete', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(id) // ID를 JSON 형식으로 서버에 전송
-    })
-    .then(response => response.text())
-    .then(data => {
-        alert(data); // 서버로부터 받은 응답을 사용자에게 알림
-    })
-    .catch(error => console.error('Error:', error));
-});
-            // 클릭된 이미지의 부모인 div를 찾고, 그 부모의 부모인 li를 삭제
-            element.closest('li').remove();
-        }
+                const file_name = element.closest('li').querySelector('input[name="file_name"]').value;
+                
+                fetch('/delete', {
+                    method: 'DELETE',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ file_name: file_name })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data); // 서버로부터 받은 응답을 사용자에게 알림
+                    if (data === '레코드가 성공적으로 삭제되었습니다.') {
+                      element.closest('li').remove(); // 클릭된 이미지의 부모인 div를 찾고, 그 부모의 부모인 li를 삭제
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
         
         window.onload = function() {
             displayUserName();
@@ -365,25 +358,25 @@ app.post('/upload', upload.single('file'), (req, res) => {
 });
 
 app.delete('/delete', (req, res) => {
-  const id  = req.body; // 클라이언트에서 보낸 ID
+  const { file_name } = req.body; // 클라이언트에서 보낸 파일 이름
 
-  if (!id) {
-    return res.status(400).send('ID is required');
+  if (!file_name) {
+    return res.status(400).send('파일 이름이 필요합니다.');
   }
-  connection.query('DELETE FROM file_storage WHERE file_name = ?', id, (error, results) => {
+
+  connection.query('DELETE FROM file_storage WHERE file_name = ?', [file_name], (error, results) => {
     if (error) {
-      console.error('Error deleting the record:', error);
-      return res.status(500).send('Error deleting the record');
+      console.error('레코드 삭제 오류:', error);
+      return res.status(500).send('레코드 삭제 오류');
     }
 
     if (results.affectedRows === 0) {
-      return res.status(404).send('No record found with the given ID');
+      return res.status(404).send('해당 파일 이름의 레코드를 찾을 수 없습니다.');
     }
 
-    res.send('Record deleted successfully');
+    res.send('레코드가 성공적으로 삭제되었습니다.');
   });
 });
-
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
