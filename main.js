@@ -218,7 +218,7 @@ app.get('/main', (req, res) => {
                 li.innerHTML = \`
                     <form id="deleteForm" method="delete" action="/delete" enctype="multipart/form-data">
                         <div class="picture">
-                                <img id="preview" class="li-upload-image" src="/UploadImage.png">
+                                <img id="preview" class="li-upload-image" src="/UploadImage.png" style="width: 100px; height: auto;">
                         </div>
                         <input id="deleteId" type="hidden" name="file_name" value="">
                     </form>
